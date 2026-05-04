@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Parent Eye - A Real-Time Child Monitoring and Alert System for Enhanced Parental Awareness">
+    <title>Parent Eye - Parent Login</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <div class="login-page" id="loginPage">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-logo">
+                    <div class="logo-icon">🎓</div>
+                    <h1 id="appTitle">Parent Eye</h1>
+                    <p id="loginSubtitle">A Real-Time Child Monitoring & Alert System</p>
+                </div>
+
+                <!-- Language Selector -->
+                <div class="lang-selector" id="loginLangSelector">
+                    <button class="lang-btn active" data-lang="en" onclick="switchLanguage('en')">English</button>
+                    <button class="lang-btn" data-lang="te" onclick="switchLanguage('te')">తెలుగు</button>
+                    <button class="lang-btn" data-lang="hi" onclick="switchLanguage('hi')">हिंदी</button>
+                    <button class="lang-btn" data-lang="ta" onclick="switchLanguage('ta')">தமிழ்</button>
+                </div>
+
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label id="usernameLabel">Username</label>
+                        <input type="text" id="username" placeholder="Enter username" autocomplete="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label id="passwordLabel">Password</label>
+                        <input type="password" id="password" placeholder="Enter password" autocomplete="current-password" required>
+                    </div>
+                    <button type="submit" class="btn-primary" id="loginBtn">
+                        <span id="loginBtnText">Login</span>
+                    </button>
+                    <div class="error-msg" id="loginError"></div>
+                    <div class="demo-hint" id="demoHint">Demo: parent1 / pass123</div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
