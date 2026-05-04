@@ -5,7 +5,6 @@ Main Flask Application
 
 import os
 import io
-import json
 from flask import Flask, request, jsonify, render_template, session, send_file
 from flask_cors import CORS
 from models import predictor
@@ -14,6 +13,20 @@ from chatbot import chatbot
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'parent-eye-secret-key-2026')
 CORS(app)
+
+SUPPORTED_LANGS = {'en', 'te', 'hi', 'ta'}
+DEFAULT_LANG = 'en'
+
+
+def normalize_lang(lang):
+    """Return a supported app language code."""
+    return lang if lang in SUPPORTED_LANGS else DEFAULT_LANG
+
+
+def json_payload():
+    """Read JSON request bodies without raising on empty or invalid input."""
+    return request.get_json(silent=True) or {}
+
 
 # ─── Demo Data ────────────────────────────────────────────────────────────────
 
@@ -63,9 +76,9 @@ STUDENT_DATA = {
         "total_students": 45,
         "remarks": "Good student with consistent improvement. Needs to focus more on English and Hindi.",
         "notifications": [
-            {"type": "exam", "message": "Mid-term exams start from March 15, 2026", "date": "2026-02-15"},
-            {"type": "meeting", "message": "Parent-Teacher meeting on March 1, 2026 at 10:00 AM", "date": "2026-02-14"},
-            {"type": "achievement", "message": "Won 2nd prize in Science Exhibition!", "date": "2026-02-10"}
+            {"type": "exam", "message": "Final-term exams start from May 20, 2026", "date": "2026-05-04"},
+            {"type": "meeting", "message": "Parent-Teacher meeting on May 10, 2026 at 10:00 AM", "date": "2026-05-03"},
+            {"type": "achievement", "message": "Won 2nd prize in Science Exhibition!", "date": "2026-04-30"}
         ]
     },
     "parent2": {
@@ -92,9 +105,9 @@ STUDENT_DATA = {
         "total_students": 42,
         "remarks": "Excellent student with outstanding performance. Class topper material!",
         "notifications": [
-            {"type": "exam", "message": "Mid-term exams start from March 15, 2026", "date": "2026-02-15"},
-            {"type": "achievement", "message": "Selected for State-level Math Olympiad!", "date": "2026-02-12"},
-            {"type": "meeting", "message": "Parent-Teacher meeting on March 1, 2026 at 10:00 AM", "date": "2026-02-14"}
+            {"type": "exam", "message": "Final-term exams start from May 20, 2026", "date": "2026-05-04"},
+            {"type": "achievement", "message": "Selected for State-level Math Olympiad!", "date": "2026-05-01"},
+            {"type": "meeting", "message": "Parent-Teacher meeting on May 10, 2026 at 10:00 AM", "date": "2026-05-03"}
         ]
     }
 }
@@ -324,8 +337,7 @@ def dashboard_page():
 @app.route('/api/translations/<lang>')
 def get_translations(lang):
     """Get UI translations for a specific language."""
-    if lang not in UI_TRANSLATIONS:
-        lang = 'en'
+    lang = normalize_lang(lang)
     return jsonify({
         "ui": UI_TRANSLATIONS[lang],
         "subjects": SUBJECT_TRANSLATIONS[lang]
@@ -335,9 +347,9 @@ def get_translations(lang):
 @app.route('/api/login', methods=['POST'])
 def login():
     """Authenticate parent login."""
-    data = request.get_json()
-    username = data.get('username', '').strip()
-    password = data.get('password', '').strip()
+    data = json_payload()
+    username = str(data.get('username', '')).strip()
+    password = str(data.get('password', '')).strip()
 
     if username in DEMO_USERS and DEMO_USERS[username]['password'] == password:
         user = DEMO_USERS[username]
@@ -364,7 +376,7 @@ def login():
 def get_dashboard():
     """Return student performance data."""
     username = request.args.get('user', 'parent1')
-    lang = request.args.get('lang', 'en')
+    lang = normalize_lang(request.args.get('lang', DEFAULT_LANG))
     if username not in STUDENT_DATA:
         return jsonify({"error": "User not found"}), 404
 
@@ -429,7 +441,7 @@ def get_dashboard():
 @app.route('/api/predict', methods=['POST'])
 def predict():
     """Predict future marks from past marks input."""
-    data = request.get_json()
+    data = json_payload()
     past_marks = data.get('past_marks', [])
 
     try:
@@ -444,10 +456,10 @@ def predict():
 @app.route('/api/chat', methods=['POST'])
 def chat():
     """Chatbot endpoint - responds to parent queries."""
-    data = request.get_json()
-    message = data.get('message', '')
+    data = json_payload()
+    message = str(data.get('message', ''))
     username = data.get('user', 'parent1')
-    lang = data.get('lang', 'en')
+    lang = normalize_lang(data.get('lang', DEFAULT_LANG))
 
     if not message.strip():
         return jsonify({"error": "Empty message"}), 400
@@ -497,9 +509,9 @@ def chat():
 @app.route('/api/translate', methods=['POST'])
 def translate_text():
     """Translate text to target language."""
-    data = request.get_json()
-    text = data.get('text', '')
-    target_lang = data.get('target', 'en')
+    data = json_payload()
+    text = str(data.get('text', ''))
+    target_lang = normalize_lang(data.get('target', DEFAULT_LANG))
 
     if not text.strip():
         return jsonify({"error": "Empty text"}), 400
@@ -523,9 +535,9 @@ def translate_text():
 @app.route('/api/tts', methods=['POST'])
 def text_to_speech():
     """Generate speech audio from text using gTTS."""
-    data = request.get_json()
-    text = data.get('text', '')
-    lang = data.get('lang', 'en')
+    data = json_payload()
+    text = str(data.get('text', ''))
+    lang = normalize_lang(data.get('lang', DEFAULT_LANG))
 
     # Map our language codes to gTTS codes
     lang_map = {'en': 'en', 'te': 'te', 'hi': 'hi', 'ta': 'ta'}
@@ -555,4 +567,4 @@ def logout():
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=os.environ.get('FLASK_DEBUG') == '1', port=int(os.environ.get('PORT', 5000)))

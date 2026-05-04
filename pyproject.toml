@@ -1,0 +1,10 @@
+[project]
+name = "parent-eye"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "flask==3.1.0",
+    "flask-cors==5.0.1",
+    "deep-translator==1.11.4",
+    "gtts==2.5.4",
+]

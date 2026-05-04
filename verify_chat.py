@@ -1,32 +1,51 @@
-import requests
-import json
+from app import app
 
-base_url = "http://127.0.0.1:5000"
 
-print("--- DASHBOARD TEST ---")
-try:
-    url = f"{base_url}/api/dashboard?user=parent1&lang=te"
-    response = requests.get(url)
-    data = response.json()
-    print(f"Remarks (TE): {data.get('remarks')}")
-    print(f"Notification 0 (TE): {data.get('notifications')[0].get('message')}")
-except Exception as e:
-    print(f"Dashboard Error: {e}")
+def expect_ok(label, response):
+    status = response.status_code
+    print(f"{label}: {status}")
+    if status >= 400:
+        print(response.get_data(as_text=True))
+        raise SystemExit(1)
+    return response.get_json()
 
-print("\n--- CHATBOT TEST ---")
-url = f"{base_url}/api/chat"
-headers = {"Content-Type": "application/json"}
-payload = {
-    "message": "నా బిడ్డ పనితీరు ఎలా ఉంది?",
-    "user": "parent1",
-    "lang": "te"
-}
-try:
-    response = requests.post(url, json=payload)
-    data = response.json()
-    print(f"Input (TE): {payload['message']}")
-    print(f"Response (TE): {data.get('response')}")
-    print(f"Original (EN): {data.get('original')}")
-    print(f"Status: {'SUCCESS' if 'response' in data else 'FAILED'}")
-except Exception as e:
-    print(f"Chat Error: {e}")
+
+client = app.test_client()
+
+print("--- APP VERIFICATION ---")
+expect_ok("GET /", client.get("/"))
+expect_ok("GET /dashboard", client.get("/dashboard"))
+
+login = expect_ok(
+    "POST /api/login",
+    client.post("/api/login", json={"username": "parent1", "password": "pass123"}),
+)
+print(f"Logged in parent: {login['user']['name']}")
+
+dashboard = expect_ok("GET /api/dashboard", client.get("/api/dashboard?user=parent1&lang=en"))
+print(f"Student: {dashboard['student']['name']}")
+print(f"First notification: {dashboard['notifications'][0]['message']}")
+
+prediction = expect_ok(
+    "POST /api/predict",
+    client.post("/api/predict", json={"past_marks": [70, 75, 80, 85]}),
+)
+print(f"Predicted mark: {prediction['predicted_mark']} ({prediction['trend']})")
+
+chat = expect_ok(
+    "POST /api/chat",
+    client.post("/api/chat", json={"message": "How are the marks?", "user": "parent1", "lang": "en"}),
+)
+print(f"Chat response: {chat['response']}")
+
+bad_login = client.post("/api/login", json={"username": "parent1", "password": "wrong"})
+print(f"Bad login rejected: {bad_login.status_code == 401}")
+if bad_login.status_code != 401:
+    raise SystemExit(1)
+
+bad_json = client.post("/api/chat", data="not json", content_type="text/plain")
+print(f"Bad chat request rejected: {bad_json.status_code == 400}")
+if bad_json.status_code != 400:
+    raise SystemExit(1)
+
+print("Verification complete.")

@@ -60,7 +60,7 @@ The core innovation lies in its AI capabilities during the project:
 
     "Technology Stack": """1. Backend:
 - Python 3.x with Flask Web Server
-- AI/ML: scikit-learn (Linear Regression), numpy
+- AI/ML: lightweight in-app linear regression for marks prediction
 - NLP: deep_translator (Google Translate), gTTS (Text-to-Speech)
 - Utilities: flask-cors
 
