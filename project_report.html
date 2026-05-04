@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Eye - Project Report</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #fff; }
+        h1 { color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        h2 { color: #34495e; margin-top: 30px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        h3 { color: #16a085; margin-top: 20px; }
+        code { background-color: #f8f9fa; padding: 2px 4px; border-radius: 4px; font-family: Consolas, monospace; color: #e83e8c; }
+        pre { background-color: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; border: 1px solid #e9ecef; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f8f9fa; font-weight: 600; }
+        .header-info { margin-bottom: 30px; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #3498db; }
+        .print-btn { position: fixed; top: 20px; right: 20px; padding: 10px 20px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; }
+        @media print { .print-btn { display: none; } body { padding: 0; max-width: 100%; } a { text-decoration: none; color: #333; } }
+    </style>
+</head>
+<body>
+    <button class="print-btn" onclick="window.print()">Print to PDF</button>
+    <h1>Parent Eye - Project Analysis Report</h1>
+    <div class="header-info">
+        <strong>Date:</strong> February 19, 2026<br>
+        <strong>Project Type:</strong> AI-Powered Multilingual Parent Education Portal<br>
+        <strong>Tech Stack:</strong> Python (Flask), JavaScript (Vanilla), Machine Learning (Scikit-learn)
+    </div>
+    <h2>1. Project Overview</h2>
+    <p><strong>Parent Eye</strong> is a web application designed to bridge the gap between schools and parents, particularly those who may not be fluent in English. It provides a real-time dashboard of student performance, attendance, and notifications, accessible in multiple Indian languages (English, Telugu, Hindi, Tamil).</p>
+    <p>The core innovation lies in its <strong>AI capabilities</strong>:</p>
+    <ul>
+        <li><strong>Performance Prediction:</strong> Uses machine learning to predict future marks based on historical trends.</li>
+        <li><strong>Multilingual Chatbot:</strong> An intelligent assistant that answers parent queries in their native language, with voice support.</li>
+    </ul>
+    <h2>2. Technology Stack</h2>
+    <h3>Backend</h3>
+    <ul>
+        <li><strong>Language:</strong> Python 3.x</li>
+        <li><strong>Framework:</strong> Flask (Web Server)</li>
+        <li><strong>AI/ML Libraries:</strong>
+            <ul>
+                <li><code>scikit-learn</code>: Implementation of Linear Regression for marks prediction.</li>
+                <li><code>numpy</code>: Numerical operations for data processing.</li>
+            </ul>
+        </li>
+        <li><strong>Natural Language Processing:</strong>
+            <ul>
+                <li><code>deep_translator</code> (Google Translator): For translating dynamic content.</li>
+                <li><code>gTTS</code> (Google Text-to-Speech): Server-side fallback for voice output.</li>
+            </ul>
+        </li>
+    </ul>
+    <h3>Frontend</h3>
+    <ul>
+        <li><strong>Core:</strong> HTML5, CSS3, Vanilla JavaScript (ES6+).</li>
+        <li><strong>Visualization:</strong> <code>Chart.js</code> (Interactive line charts).</li>
+        <li><strong>Voice API:</strong> <code>Web Speech API</code> for speech-to-text.</li>
+    </ul>
+    <h2>3. Key Features</h2>
+    <h3>A. Multilingual Support</h3>
+    <p>Supports <strong>English, Telugu, Hindi, and Tamil</strong>. The app uses a hybrid approach with static dictionaries for UI elements and Google Translate API for dynamic content like messages and remarks.</p>
+    <h3>B. AI-Powered Dashboard</h3>
+    <p>The dashboard provides deep insights into student performance:</p>
+    <ul>
+        <li><strong>Visual Analytics:</strong> Color-coded marks and trend lines.</li>
+        <li><strong>Predictive Engine:</strong> Uses Linear Regression (in <code>models.py</code>) to analyze historical data and forecast the next semester's performance, providing a confidence score and trend indicator (Improving/Declining).</li>
+    </ul>
+    <h3>C. Chat Assistant</h3>
+    <p>The chatbot (in <code>chatbot.py</code>) is context-aware. It knows the logged-in student's data and can answer specific questions like "How is my child doing in Math?" in the parent's native language. It supports voice input/output for accessibility.</p>
+    <h2>4. API Endpoints</h2>
+    <table>
+        <thead><tr><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
+        <tbody>
+            <tr><td>/</td><td>GET</td><td>Login page</td></tr>
+            <tr><td>/dashboard</td><td>GET</td><td>Dashboard page</td></tr>
+            <tr><td>/api/dashboard</td><td>GET</td><td>Student data & predictions</td></tr>
+            <tr><td>/api/chat</td><td>POST</td><td>Chatbot interaction</td></tr>
+            <tr><td>/api/predict</td><td>POST</td><td>Custom prediction</td></tr>
+            <tr><td>/api/tts</td><td>POST</td><td>Text-to-Speech</td></tr>
+        </tbody>
+    </table>
+    <br><hr><p style="text-align: center; color: #7f8c8d; font-size: 0.9em;">Generated by Antigravity AI</p>
+</body>
+</html>
